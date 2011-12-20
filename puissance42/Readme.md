@@ -5,7 +5,7 @@ puissance42 is a small connect four game. Its a turn-based strategy game where 2
 
 	compilation :
 cmake . -G"Unix Makefiles"
-mae
+make
 
 	execution :
 ./puissance42 [--nogui]
