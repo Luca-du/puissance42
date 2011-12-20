@@ -4,13 +4,13 @@
 #include "./main.h"
 #include "./game.h"
 #include "./check.h"
+extern int no_gui;
 
 void purger()
 {
     int c;
     while ((c = getchar()) != '\n' && c != EOF)
     {
-
     }
 }
 
@@ -32,14 +32,18 @@ int check_win(int **grid, int* colPos, int colChoice, int winornot)
     winornot=check_horiz(grid, colChoice, colPos);
     if(winornot==0)
     {
-        winornot=check_vert(grid, colChoice, colPos);
+       winornot=check_vert(grid, colChoice, colPos);
     }
 
     if(winornot==0)
     {
-        check_diag();
+       winornot=check_diag_up_right(grid, colChoice, colPos);
     }
-    printf("%d",winornot);
+
+    if(winornot==0)
+    {
+       winornot=check_diag_down_right(grid, colChoice, colPos);
+    }
     return winornot;
 }
 
@@ -64,7 +68,8 @@ void display_grid(int** grid, Player *player1, Player *player2)
                 printf("|     ");
             }
         }
-        printf("\n");
+    printf("\n________________________________________\n");
+
     }
 }
 
@@ -73,7 +78,6 @@ int play(Player *player, int** grid,int* colPos, int colChoice, int winornot)
     colPos[colChoice]++;
     grid[6-colPos[colChoice]][colChoice-1]=player->numberP;
     winornot=check_win(grid, colPos, colChoice, winornot);
-    printf("%d",winornot);
     return winornot;
 }
 
@@ -81,7 +85,7 @@ void game(int **grid, Player *player1, Player *player2)
 {
     int turn=0, colChoice=8, winornot=0;
     int* colPos;
-    colPos=calloc (9,sizeof(int));
+    colPos=calloc (8,sizeof(int));
     while (turn<42 && winornot == 0)
     {
         if (turn%2==0)
@@ -93,28 +97,32 @@ void game(int **grid, Player *player1, Player *player2)
                 purger();
             }
             winornot=play(player1, grid, colPos, colChoice, winornot);
-            display_grid(grid, player1, player2);
-            turn++;
-            colChoice=8;
+            if (no_gui==0)
+            {
+                display_grid(grid, player1, player2);
+            }
+            colChoice=0;
         }
         else
         {
-            while ((colChoice>7 || colChoice<1)||colPos[colChoice]>5)
+            while ((colChoice>7 || colChoice<1) || colPos[colChoice]>5)
             {
                 printf("choisie ta colonne %s (chiffre entre 1 et 7)\n", player2->pseudo);
                 scanf("%d",&colChoice);
                 purger();
             }
             winornot=play(player2, grid, colPos, colChoice, winornot);
-            display_grid(grid, player1, player2);
-            turn++;
-            colChoice=8;
-        }
+            if (no_gui==0)
+            {
+                display_grid(grid, player1, player2);
+            }
+            colChoice=0;
+        }turn++;
     }
-    endgame(player1, player2, turn, winornot);
+    endgame(grid, player1, player2, turn, winornot, colPos);
 }
 
-void endgame(Player *player1, Player *player2, int turn, int winornot)
+void endgame(int** grid, Player *player1, Player *player2, int turn, int winornot, int* colPos)
 {
     if(turn%2==1 && winornot==1)
     {
@@ -128,4 +136,13 @@ void endgame(Player *player1, Player *player2, int turn, int winornot)
     {
         printf("Match nul :/");
     }
+    free_all(grid, player1, player2, colPos);
+}
+
+free_all(int** grid, Player *player1, Player *player2, int* colPos)
+{
+    free(grid);
+    free(player1);
+    free(player2);
+    free(colPos);
 }
