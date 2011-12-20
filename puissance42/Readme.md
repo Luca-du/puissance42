@@ -1,11 +1,13 @@
-description :
-	puissance42 is a small connect four game. Its a turn-based strategy game where 2 players try to align 4 tokens on a 6x7 grid.
+Puissance 4 game :
 
-compilation :
-	cmake . -G"Unix Makefiles"
-	mae
+	description :
+puissance42 is a small connect four game. Its a turn-based strategy game where 2 players try to align 4 tokens on a 6x7 grid.
 
-execution :
-	./puissance42 [--nogui]
+	compilation :
+cmake . -G"Unix Makefiles"
+mae
 
-	--nogui : do not display the grid ever. Epic memory required.
+	execution :
+./puissance42 [--nogui]
+
+--nogui : do not display the grid ever. Epic memory required.
